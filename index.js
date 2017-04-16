@@ -4,6 +4,8 @@ var fetch = require('isomorphic-fetch')
 var restbus = require('restbus')
 var RTM = require('satori-sdk-js')
 
+var express = require('express')
+const path = require('path')
 var endpoint = 'wss://open-data.api.satori.com'
 var appkey = process.env.APP_KEY
 var role = process.env.ROLE
@@ -16,8 +18,15 @@ var rtm = new RTM(endpoint, appkey, {
   authProvider: roleSecretProvider
 })
 
+const PORT = process.env.PORT || 5000
+const INDEX = path.join(__dirname, 'index.html')
+
+express()
+  .use((req, res) => res.sendFile(INDEX))
+  .listen(PORT, () => console.log(`Listening on ${PORT}`))
+
 var fetchVehicles = function () {
-  fetch('http://localhost:4545/agencies/sf-muni/vehicles')
+  fetch('http://localhost:5001/agencies/sf-muni/vehicles')
   .then(function (response) {
     if (response.status >= 400) {
       throw new Error('Bad response from server')
@@ -41,8 +50,8 @@ var fetchVehicles = function () {
 // var subscription = rtm.subscribe(channel, RTM.SubscriptionMode.SIMPLE)
 
 rtm.on('enter-connected', function () {
-  restbus.listen('4545', function () {
-    console.log('restbus is now listening on port 4545')
+  restbus.listen('5001', function () {
+    console.log('restbus is now listening on port 5001')
   })
   console.log('Connected to RTM.')
   setInterval(fetchVehicles, 2000)

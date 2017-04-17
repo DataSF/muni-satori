@@ -57,10 +57,6 @@ rtm.on('enter-connected', function () {
   setInterval(fetchVehicles, 2000)
 })
 
-rtm.on('error', function () {
-
-})
-
 /* publish a message after being subscribed to sync on subscription */
 
 /*
